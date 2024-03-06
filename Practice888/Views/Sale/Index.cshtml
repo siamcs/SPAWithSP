@@ -1,0 +1,147 @@
+﻿@model Practice888.Vm.VmSale
+@{
+    ViewData["Title"] = "Index";
+    var L = ViewData["List"] as List<Practice888.Models.SaleMaster>;
+    var D = ViewData["DList"] as List<Practice888.Models.SaleDetail>;
+    var BV = Model.SaleId > 0 ? "Update" : "Add";
+    var indexItem = 0;
+}
+
+<h1>Aggregate fns</h1>
+<h5>Sum:@ViewData["s"]</h5>
+<h5>Av:@ViewData["a"] </h5>
+<h5>Max:@ViewData["mx"]</h5>
+<h5>Min:@ViewData["mn"]</h5>
+<h5>Count:@ViewData["c"]</h5>
+@*<h5>Count:@ViewData["G"]</h5>*@
+
+<form asp-action="Index" asp-controller="Sale" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="SaleId"/>
+    <div>
+        <label asp-for="CustomerName"></label>
+        <input type="text" asp-for="CustomerName" />
+    </div>
+    <div>
+        <label asp-for="CID">Category Name</label>
+        <select asp-for="CID" asp-items="@ViewBag.CID"></select>
+    </div>
+    <div>
+        <label asp-for="Gender"></label><br />
+        <label asp-for="Gender">Male</label>
+        <input type="radio" asp-for="Gender" name="Gender" value="Male" checked="@Model.Gender==" Male"" /><br />
+       <br /> <label asp-for="Gender">Female</label>
+        <input type="radio" asp-for="Gender" name="Gender" value="Female" checked="@Model.Gender==" Female"" />
+    </div>
+    <table>
+        <tr>
+            <th>ProductName</th>
+            <th>Price</th>
+            <th>Photo</th>
+            <th>date</th>
+            <th><button type="button" onclick="Additem()">add More</button></th>
+        </tr>
+        <tbody id="tSD">
+            @foreach(var item in Model.SaleDetails)
+            {
+                <tr id="tr_@indexItem">
+                    <td>
+                        <input type="text" id="ProductName_@indexItem" name="ProductName" value="@item.ProductName" />
+                    </td>
+                    <td>
+                        <input type="number" id="Price_@indexItem" name="Price" value="@item.Price" />
+                    </td>
+                    <td>
+                        <input type="file" id="Photo_@indexItem" name="img" value="@item.Photo" />
+                    </td>
+                    <td>
+                        <input type="date" id="Date_@indexItem" name="Date" value="@item.Date" />
+                    </td>
+                    <td>
+                        <a href="javascript:void(0)" onclick="RemoveItem(@indexItem)">RemoveItem</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit">@BV</button>
+    <a asp-action="Index" asp-controller="Sale">RESET</a>
+</form>
+<table>
+    <tr>
+        <th>CustomerName</th>
+          <th>Gender</th>
+        <th>TypeId</th>
+  </tr>
+  @foreach(var item in L)
+    {
+        <tr>
+            <td>@item.CustomerName</td>
+            <td>@item.Gender</td>
+            <td>@item.CID</td>
+            <td> <a asp-action="Index" asp-route-id="@item.SaleId">EDIT</a></td>
+            <td> <a asp-action="Delete" asp-route-id="@item.SaleId">Delete</a></td>
+        </tr>
+    }
+</table>
+<br />
+<table>
+    <tr>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Photo</th>
+        <th>Date</th>
+    </tr>
+    @foreach (var item in D)
+    {
+        <tr>
+            <td>@item.ProductName</td>
+            <td>@item.Price</td>
+            <td><img src="@item.Photo" width="200" height="200"/> </td>
+            <td>@item.Date</td>
+        </tr>
+    }
+</table>
+<script>
+    var indexItem = @indexItem;
+    function Additem()
+    {
+        indexItem +=1;
+        var Trs = `<tr id="tr_${indexItem}">
+                        <td>
+                            <input type="text" id="ProductName_@indexItem" name="ProductName" value=" " />
+                        </td>
+                        <td>
+                            <input type="number" id="Price_@indexItem" name="Price" value=" " />
+                        </td>
+                        <td>
+                            <input type="file" id="Photo_@indexItem" name="img" value=" " />
+                        </td>
+                        <td>
+                                <input type="date" id="Date_@indexItem" name="Date" value=" " />
+                        </td>
+                        <td>
+                            <a href="javascript:void(0)" onclick="RemoveItem(${indexItem})">RemoveItem</a>
+                        </td>
+                    </tr>`
+                    document.getElementById('tSD').innerHTML +=Trs;
+    }
+    function RemoveItem(id)
+    {
+        document.getElementById('tr_'+id).remove();
+    }
+</script>
+<script>
+  //$(document).ready(function)
+  //  {
+  //      $("#b").click(function(){
+  //          $.ajax({
+  //              url:'/Sale/Index',
+  //              type:"POST",
+  //              data:FormData
+
+  //          }).done(function(data){
+
+  //          })
+  //      })
+  //  }
+</script>
